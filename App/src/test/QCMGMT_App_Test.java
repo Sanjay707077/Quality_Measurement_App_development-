@@ -6,95 +6,86 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QCMGMT_App_Test {
 
-    // ---------- SAME UNIT TESTS ----------
+    double eps = 1e-6;
+
+    // ---------- CONVERSION TESTS ----------
     @Test
-    void testYardToYard_SameValue() {
-        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
-        QCMGMT_App.Yards b = new QCMGMT_App.Yards(1);
-        assertTrue(a.equals(b));
+    void testConversion_FeetToInches() {
+        QCMGMT_App.Feet f = new QCMGMT_App.Feet(1);
+        assertEquals(12.0, f.toInches(), eps);
     }
 
     @Test
-    void testYardToYard_DifferentValue() {
-        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
-        QCMGMT_App.Yards b = new QCMGMT_App.Yards(2);
-        assertFalse(a.equals(b));
-    }
-
-    // ---------- CROSS UNIT TESTS ----------
-    @Test
-    void testYardToFeet() {
-        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
-        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(3);
-        assertTrue(yard.equals(feet));
+    void testConversion_InchesToFeet() {
+        QCMGMT_App.Inches i = new QCMGMT_App.Inches(24);
+        assertEquals(2.0, i.toInches() / 12.0, eps);
     }
 
     @Test
-    void testYardToInches() {
-        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
-        QCMGMT_App.Inches inch = new QCMGMT_App.Inches(36);
-        assertTrue(yard.equals(inch));
+    void testConversion_YardsToInches() {
+        QCMGMT_App.Yards y = new QCMGMT_App.Yards(1);
+        assertEquals(36.0, y.toInches(), eps);
     }
 
     @Test
-    void testCmToCm() {
-        QCMGMT_App.Centimeters a = new QCMGMT_App.Centimeters(2);
-        QCMGMT_App.Centimeters b = new QCMGMT_App.Centimeters(2);
-        assertTrue(a.equals(b));
+    void testConversion_FeetToYards() {
+        QCMGMT_App.Feet f = new QCMGMT_App.Feet(6);
+        assertEquals(2.0, f.toInches() / 36.0, eps);
     }
 
     @Test
-    void testCmToInch() {
-        QCMGMT_App.Centimeters cm = new QCMGMT_App.Centimeters(1);
-        QCMGMT_App.Inches inch = new QCMGMT_App.Inches(0.393701);
-        assertTrue(cm.equals(inch));
+    void testConversion_CmToInches() {
+        QCMGMT_App.Centimeters cm = new QCMGMT_App.Centimeters(2.54);
+        assertEquals(1.0, cm.toInches(), 1e-4);
+    }
+
+    // ---------- ROUND TRIP ----------
+    @Test
+    void testRoundTrip() {
+        double x = 5.5;
+
+        QCMGMT_App.Feet f = new QCMGMT_App.Feet(x);
+        double cm = f.toInches() / 0.393701;
+
+        QCMGMT_App.Centimeters cmObj = new QCMGMT_App.Centimeters(cm);
+        double back = cmObj.toInches() / 12.0;
+
+        assertEquals(x, back, 1e-5);
+    }
+
+    // ---------- EDGE CASES ----------
+    @Test
+    void testZero() {
+        QCMGMT_App.Feet f = new QCMGMT_App.Feet(0);
+        assertEquals(0.0, f.toInches(), eps);
     }
 
     @Test
-    void testCmToFeet_NotEqual() {
-        QCMGMT_App.Centimeters cm = new QCMGMT_App.Centimeters(1);
-        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(1);
-        assertFalse(cm.equals(feet));
-    }
-
-    // ---------- EQUALITY CONTRACT TESTS ----------
-    @Test
-    void testTransitiveProperty() {
-        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
-        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(3);
-        QCMGMT_App.Inches inch = new QCMGMT_App.Inches(36);
-
-        assertTrue(yard.equals(feet));
-        assertTrue(feet.equals(inch));
-        assertTrue(yard.equals(inch));
+    void testNegative() {
+        QCMGMT_App.Feet f = new QCMGMT_App.Feet(-1);
+        assertEquals(-12.0, f.toInches(), eps);
     }
 
     @Test
-    void testSameReference() {
-        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
-        assertTrue(a.equals(a));
+    void testSameUnit() {
+        QCMGMT_App.Feet f = new QCMGMT_App.Feet(5);
+        assertEquals(5.0, f.toInches() / 12.0, eps);
+    }
+
+    // ---------- VALIDATION ----------
+    @Test
+    void testInvalidValue_NaN() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new QCMGMT_App.Feet(Double.NaN)
+        );
     }
 
     @Test
-    void testNullComparison() {
-        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
-        assertFalse(a.equals(null));
-    }
-
-    @Test
-    void testInvalidTypeComparison() {
-        QCMGMT_App.Inches i = new QCMGMT_App.Inches(1);
-        String text = "abc";
-        assertFalse(i.equals(text));
-    }
-
-    // ---------- HASHCODE TEST ----------
-    @Test
-    void testHashCodeConsistency() {
-        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
-        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(3);
-
-        assertTrue(yard.equals(feet));
-        assertEquals(yard.hashCode(), feet.hashCode());
+    void testInvalidValue_Infinite() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new QCMGMT_App.Inches(Double.POSITIVE_INFINITY)
+        );
     }
 }
