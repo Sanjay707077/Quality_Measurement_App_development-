@@ -34,14 +34,14 @@ public class QCMGMT_App {
 
         private static void validate(double value, LengthUnit unit) {
             if (unit == null)
-                throw new IllegalArgumentException("Unit cannot be null");
+                throw new IllegalArgumentException("Invalid unit");
 
             if (!Double.isFinite(value))
                 throw new IllegalArgumentException("Invalid number");
         }
 
         private double toBaseUnit() {
-            return value * unit.getFactor(); // convert to inches
+            return value * unit.getFactor(); // inches
         }
 
         public double getValue() {
@@ -57,7 +57,7 @@ public class QCMGMT_App {
             validate(value, from);
 
             if (to == null)
-                throw new IllegalArgumentException("Target unit cannot be null");
+                throw new IllegalArgumentException("Invalid target unit");
 
             return value * from.getFactor() / to.getFactor();
         }
@@ -69,26 +69,39 @@ public class QCMGMT_App {
             );
         }
 
-        // ---------- ADDITION ----------
+        // ---------- ADDITION (UC7 FEATURE) ----------
         public QuantityLength add(QuantityLength other) {
-            if (other == null)
+            return add(this, other, this.unit);
+        }
+
+        public static QuantityLength add(
+                QuantityLength a,
+                QuantityLength b,
+                LengthUnit targetUnit) {
+
+            if (a == null || b == null)
                 throw new IllegalArgumentException("Null operand");
 
-            double totalBase = this.toBaseUnit() + other.toBaseUnit();
+            if (targetUnit == null)
+                throw new IllegalArgumentException("Null target unit");
 
-            double result = totalBase / this.unit.getFactor();
+            double totalBase = a.toBaseUnit() + b.toBaseUnit();
 
-            return new QuantityLength(result, this.unit);
+            double result = totalBase / targetUnit.getFactor();
+
+            return new QuantityLength(result, targetUnit);
         }
 
-        public static QuantityLength add(QuantityLength a, QuantityLength b) {
-            return a.add(b);
-        }
+        public static QuantityLength add(
+                double v1, LengthUnit u1,
+                double v2, LengthUnit u2,
+                LengthUnit target) {
 
-        public static QuantityLength add(double v1, LengthUnit u1,
-                                         double v2, LengthUnit u2) {
-            return new QuantityLength(v1, u1)
-                    .add(new QuantityLength(v2, u2));
+            return add(
+                    new QuantityLength(v1, u1),
+                    new QuantityLength(v2, u2),
+                    target
+            );
         }
 
         // ---------- EQUALITY ----------
@@ -119,11 +132,16 @@ public class QCMGMT_App {
         var a = new QuantityLength(1, LengthUnit.FEET);
         var b = new QuantityLength(12, LengthUnit.INCH);
 
-        System.out.println(a.add(b)); // 2 FEET
+        System.out.println(
+                QuantityLength.add(a, b, LengthUnit.FEET)
+        ); // 2 FEET
 
-        var y = new QuantityLength(1, LengthUnit.YARDS);
-        var f = new QuantityLength(3, LengthUnit.FEET);
+        System.out.println(
+                QuantityLength.add(a, b, LengthUnit.INCH)
+        ); // 24 INCH
 
-        System.out.println(y.add(f)); // 2 YARDS
+        System.out.println(
+                QuantityLength.add(a, b, LengthUnit.YARDS)
+        ); // 0.666... YARDS
     }
 }
