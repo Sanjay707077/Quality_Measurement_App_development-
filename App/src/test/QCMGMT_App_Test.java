@@ -1,45 +1,62 @@
 package test;
+
 import Main.QCMGMT_App;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 public class QCMGMT_App_Test {
-
     @Test
-    void testEquality_SameValue() {
-        QCMGMT_App.Feet f1 = new QCMGMT_App.Feet(1.0);
-        QCMGMT_App.Feet f2 = new QCMGMT_App.Feet(1.0);
-
-        assertTrue(f1.equals(f2), "1.0 ft should equal 1.0 ft");
+    void testFeetEquality_SameValue() {
+        assertTrue(
+                QCMGMT_App.compareFeet(1.0,1.0)
+        );
     }
-
     @Test
-    void testEquality_DifferentValue() {
-        QCMGMT_App.Feet f1 = new QCMGMT_App.Feet(1.0);
-        QCMGMT_App.Feet f2 = new QCMGMT_App.Feet(2.0);
-
-        assertFalse(f1.equals(f2), "1.0 ft should not equal 2.0 ft");
+    void testFeetEquality_DifferentValue() {
+        assertFalse(
+                QCMGMT_App.compareFeet(1.0,2.0)
+        );
     }
-
     @Test
-    void testEquality_NullComparison() {
-        QCMGMT_App.Feet f1 = new QCMGMT_App.Feet(1.0);
-
-        assertFalse(f1.equals(null), "Value should not equal null");
+    void testFeetEquality_NullComparison() {
+        QCMGMT_App.Feet f =
+                new QCMGMT_App.Feet(1.0);
+        assertFalse(f.equals(null));
     }
-
+    @Test
+    void testFeetEquality_SameReference() {
+        QCMGMT_App.Feet f =
+                new QCMGMT_App.Feet(1.0);
+        assertTrue(f.equals(f));
+    }
+    @Test
+    void testInchesEquality_SameValue() {
+        assertTrue(
+                QCMGMT_App.compareInches(1.0,1.0)
+        );
+    }
+    @Test
+    void testInchesEquality_DifferentValue() {
+        assertFalse(
+                QCMGMT_App.compareInches(1.0,2.0)
+        );
+    }
+    @Test
+    void testInchesEquality_NullComparison() {
+        QCMGMT_App.Inches i =
+                new QCMGMT_App.Inches(1.0);
+        assertFalse(i.equals(null));
+    }
+    @Test
+    void testInchesEquality_SameReference() {
+        QCMGMT_App.Inches i =
+                new QCMGMT_App.Inches(1.0);
+        assertTrue(i.equals(i));
+    }
     @Test
     void testEquality_NonNumericInput() {
-        QCMGMT_App.Feet f1 = new QCMGMT_App.Feet(1.0);
-        String nonNumeric = "abc";
-
-        assertFalse(f1.equals(nonNumeric), "Should not equal non-numeric input");
-    }
-
-    @Test
-    void testEquality_SameReference() {
-        QCMGMT_App.Feet f1 = new QCMGMT_App.Feet(1.0);
-
-        assertTrue(f1.equals(f1), "Same object reference should be equal");
+        QCMGMT_App.Inches i =
+                new QCMGMT_App.Inches(1.0);
+        String text = "abc";
+        assertFalse(i.equals(text));
     }
 }
