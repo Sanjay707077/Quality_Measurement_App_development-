@@ -6,68 +6,95 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QCMGMT_App_Test {
 
-    // ---------- FEET TESTS ----------
+    // ---------- SAME UNIT TESTS ----------
     @Test
-    void testFeetEquality_SameValue() {
-        assertTrue(QCMGMT_App.compareFeet(1.0, 1.0));
+    void testYardToYard_SameValue() {
+        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
+        QCMGMT_App.Yards b = new QCMGMT_App.Yards(1);
+        assertTrue(a.equals(b));
     }
 
     @Test
-    void testFeetEquality_DifferentValue() {
-        assertFalse(QCMGMT_App.compareFeet(1.0, 2.0));
-    }
-
-    @Test
-    void testFeetEquality_NullComparison() {
-        QCMGMT_App.Feet f = new QCMGMT_App.Feet(1.0);
-        assertFalse(f.equals(null));
-    }
-
-    @Test
-    void testFeetEquality_SameReference() {
-        QCMGMT_App.Feet f = new QCMGMT_App.Feet(1.0);
-        assertTrue(f.equals(f));
-    }
-
-    // ---------- INCHES TESTS ----------
-    @Test
-    void testInchesEquality_SameValue() {
-        assertTrue(QCMGMT_App.compareInches(12.0, 12.0));
-    }
-
-    @Test
-    void testInchesEquality_DifferentValue() {
-        assertFalse(QCMGMT_App.compareInches(12.0, 24.0));
-    }
-
-    @Test
-    void testInchesEquality_NullComparison() {
-        QCMGMT_App.Inches i = new QCMGMT_App.Inches(1.0);
-        assertFalse(i.equals(null));
-    }
-
-    @Test
-    void testInchesEquality_SameReference() {
-        QCMGMT_App.Inches i = new QCMGMT_App.Inches(1.0);
-        assertTrue(i.equals(i));
+    void testYardToYard_DifferentValue() {
+        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
+        QCMGMT_App.Yards b = new QCMGMT_App.Yards(2);
+        assertFalse(a.equals(b));
     }
 
     // ---------- CROSS UNIT TESTS ----------
     @Test
-    void testFeetAndInches_Equal() {
-        assertTrue(QCMGMT_App.compareFeetAndInches(1.0, 12.0));
+    void testYardToFeet() {
+        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
+        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(3);
+        assertTrue(yard.equals(feet));
     }
 
     @Test
-    void testFeetAndInches_NotEqual() {
-        assertFalse(QCMGMT_App.compareFeetAndInches(1.0, 10.0));
+    void testYardToInches() {
+        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
+        QCMGMT_App.Inches inch = new QCMGMT_App.Inches(36);
+        assertTrue(yard.equals(inch));
     }
 
-    // ---------- INVALID COMPARISON ----------
     @Test
-    void testEquality_NonNumericInput() {
-        QCMGMT_App.Inches i = new QCMGMT_App.Inches(1.0);
+    void testCmToCm() {
+        QCMGMT_App.Centimeters a = new QCMGMT_App.Centimeters(2);
+        QCMGMT_App.Centimeters b = new QCMGMT_App.Centimeters(2);
+        assertTrue(a.equals(b));
+    }
+
+    @Test
+    void testCmToInch() {
+        QCMGMT_App.Centimeters cm = new QCMGMT_App.Centimeters(1);
+        QCMGMT_App.Inches inch = new QCMGMT_App.Inches(0.393701);
+        assertTrue(cm.equals(inch));
+    }
+
+    @Test
+    void testCmToFeet_NotEqual() {
+        QCMGMT_App.Centimeters cm = new QCMGMT_App.Centimeters(1);
+        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(1);
+        assertFalse(cm.equals(feet));
+    }
+
+    // ---------- EQUALITY CONTRACT TESTS ----------
+    @Test
+    void testTransitiveProperty() {
+        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
+        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(3);
+        QCMGMT_App.Inches inch = new QCMGMT_App.Inches(36);
+
+        assertTrue(yard.equals(feet));
+        assertTrue(feet.equals(inch));
+        assertTrue(yard.equals(inch));
+    }
+
+    @Test
+    void testSameReference() {
+        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
+        assertTrue(a.equals(a));
+    }
+
+    @Test
+    void testNullComparison() {
+        QCMGMT_App.Yards a = new QCMGMT_App.Yards(1);
+        assertFalse(a.equals(null));
+    }
+
+    @Test
+    void testInvalidTypeComparison() {
+        QCMGMT_App.Inches i = new QCMGMT_App.Inches(1);
         String text = "abc";
         assertFalse(i.equals(text));
+    }
+
+    // ---------- HASHCODE TEST ----------
+    @Test
+    void testHashCodeConsistency() {
+        QCMGMT_App.Yards yard = new QCMGMT_App.Yards(1);
+        QCMGMT_App.Feet feet = new QCMGMT_App.Feet(3);
+
+        assertTrue(yard.equals(feet));
+        assertEquals(yard.hashCode(), feet.hashCode());
     }
 }
