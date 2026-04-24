@@ -2,11 +2,14 @@ package Main;
 
 public class QCMGMT_App {
 
+    private static final double EPSILON = 1e-6;
+
     // ---------- FEET ----------
     public static class Feet {
         private final double value;
 
         public Feet(double value) {
+            validate(value);
             this.value = value;
         }
 
@@ -16,24 +19,23 @@ public class QCMGMT_App {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+
+            double otherValue;
 
             if (obj instanceof Feet)
-                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
+                otherValue = ((Feet) obj).toInches();
+            else if (obj instanceof Inches)
+                otherValue = ((Inches) obj).toInches();
+            else if (obj instanceof Yards)
+                otherValue = ((Yards) obj).toInches();
+            else if (obj instanceof Centimeters)
+                otherValue = ((Centimeters) obj).toInches();
+            else
+                return false;
 
-            if (obj instanceof Inches)
-                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
-
-            if (obj instanceof Yards)
-                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
-
-            if (obj instanceof Centimeters)
-                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
-
-            return false;
+            return Math.abs(this.toInches() - otherValue) < EPSILON;
         }
 
         @Override
@@ -47,6 +49,7 @@ public class QCMGMT_App {
         private final double value;
 
         public Inches(double value) {
+            validate(value);
             this.value = value;
         }
 
@@ -56,24 +59,23 @@ public class QCMGMT_App {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+
+            double otherValue;
 
             if (obj instanceof Feet)
-                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
+                otherValue = ((Feet) obj).toInches();
+            else if (obj instanceof Inches)
+                otherValue = ((Inches) obj).toInches();
+            else if (obj instanceof Yards)
+                otherValue = ((Yards) obj).toInches();
+            else if (obj instanceof Centimeters)
+                otherValue = ((Centimeters) obj).toInches();
+            else
+                return false;
 
-            if (obj instanceof Inches)
-                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
-
-            if (obj instanceof Yards)
-                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
-
-            if (obj instanceof Centimeters)
-                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
-
-            return false;
+            return Math.abs(this.toInches() - otherValue) < EPSILON;
         }
 
         @Override
@@ -87,6 +89,7 @@ public class QCMGMT_App {
         private final double value;
 
         public Yards(double value) {
+            validate(value);
             this.value = value;
         }
 
@@ -96,24 +99,23 @@ public class QCMGMT_App {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+
+            double otherValue;
 
             if (obj instanceof Feet)
-                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
+                otherValue = ((Feet) obj).toInches();
+            else if (obj instanceof Inches)
+                otherValue = ((Inches) obj).toInches();
+            else if (obj instanceof Yards)
+                otherValue = ((Yards) obj).toInches();
+            else if (obj instanceof Centimeters)
+                otherValue = ((Centimeters) obj).toInches();
+            else
+                return false;
 
-            if (obj instanceof Inches)
-                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
-
-            if (obj instanceof Yards)
-                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
-
-            if (obj instanceof Centimeters)
-                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
-
-            return false;
+            return Math.abs(this.toInches() - otherValue) < EPSILON;
         }
 
         @Override
@@ -127,6 +129,7 @@ public class QCMGMT_App {
         private final double value;
 
         public Centimeters(double value) {
+            validate(value);
             this.value = value;
         }
 
@@ -136,24 +139,23 @@ public class QCMGMT_App {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+
+            double otherValue;
 
             if (obj instanceof Feet)
-                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
+                otherValue = ((Feet) obj).toInches();
+            else if (obj instanceof Inches)
+                otherValue = ((Inches) obj).toInches();
+            else if (obj instanceof Yards)
+                otherValue = ((Yards) obj).toInches();
+            else if (obj instanceof Centimeters)
+                otherValue = ((Centimeters) obj).toInches();
+            else
+                return false;
 
-            if (obj instanceof Inches)
-                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
-
-            if (obj instanceof Yards)
-                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
-
-            if (obj instanceof Centimeters)
-                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
-
-            return false;
+            return Math.abs(this.toInches() - otherValue) < EPSILON;
         }
 
         @Override
@@ -162,15 +164,32 @@ public class QCMGMT_App {
         }
     }
 
+    // ---------- VALIDATION ----------
+    private static void validate(double value) {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid numeric value");
+        }
+    }
+
+    // ---------- CONVERSION UTILITY ----------
+    public static double convertToInches(Object obj) {
+        if (obj instanceof Feet) return ((Feet) obj).toInches();
+        if (obj instanceof Inches) return ((Inches) obj).toInches();
+        if (obj instanceof Yards) return ((Yards) obj).toInches();
+        if (obj instanceof Centimeters) return ((Centimeters) obj).toInches();
+        throw new IllegalArgumentException("Unsupported type");
+    }
+
     // ---------- MAIN ----------
     public static void main(String[] args) {
 
-        Yards yard = new Yards(1);
-        Feet feet = new Feet(3);
+        Feet f = new Feet(1);
+        Inches i = new Inches(12);
+        Yards y = new Yards(1);
         Centimeters cm = new Centimeters(1);
-        Inches inch = new Inches(0.393701);
 
-        System.out.println("Yard == Feet: " + yard.equals(feet)); // true
-        System.out.println("CM == Inch: " + cm.equals(inch));     // true
+        System.out.println("Feet == Inches: " + f.equals(i));   // true
+        System.out.println("Yard == Feet: " + y.equals(new Feet(3))); // true
+        System.out.println("CM == Inch: " + cm.equals(new Inches(0.393701))); // true
     }
 }
