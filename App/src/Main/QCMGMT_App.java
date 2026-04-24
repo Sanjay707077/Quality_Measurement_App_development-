@@ -2,6 +2,7 @@ package Main;
 
 public class QCMGMT_App {
 
+    // ---------- FEET ----------
     public static class Feet {
         private final double value;
 
@@ -9,8 +10,8 @@ public class QCMGMT_App {
             this.value = value;
         }
 
-        public double toFeet() {
-            return value; // already in feet
+        public double toInches() {
+            return value * 12.0;
         }
 
         @Override
@@ -20,27 +21,28 @@ public class QCMGMT_App {
             if (obj == null)
                 return false;
 
-            // Compare with Feet
-            if (obj instanceof Feet) {
-                Feet other = (Feet) obj;
-                return Double.compare(this.toFeet(), other.toFeet()) == 0;
-            }
+            if (obj instanceof Feet)
+                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
 
-            // Compare with Inches
-            if (obj instanceof Inches) {
-                Inches other = (Inches) obj;
-                return Double.compare(this.toFeet(), other.toFeet()) == 0;
-            }
+            if (obj instanceof Inches)
+                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
+
+            if (obj instanceof Yards)
+                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
+
+            if (obj instanceof Centimeters)
+                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
 
             return false;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(toFeet());
+            return Double.hashCode(toInches());
         }
     }
 
+    // ---------- INCHES ----------
     public static class Inches {
         private final double value;
 
@@ -48,8 +50,8 @@ public class QCMGMT_App {
             this.value = value;
         }
 
-        public double toFeet() {
-            return value / 12.0; // convert inches to feet
+        public double toInches() {
+            return value;
         }
 
         @Override
@@ -59,50 +61,116 @@ public class QCMGMT_App {
             if (obj == null)
                 return false;
 
-            // Compare with Inches
-            if (obj instanceof Inches) {
-                Inches other = (Inches) obj;
-                return Double.compare(this.toFeet(), other.toFeet()) == 0;
-            }
+            if (obj instanceof Feet)
+                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
 
-            // Compare with Feet
-            if (obj instanceof Feet) {
-                Feet other = (Feet) obj;
-                return Double.compare(this.toFeet(), other.toFeet()) == 0;
-            }
+            if (obj instanceof Inches)
+                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
+
+            if (obj instanceof Yards)
+                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
+
+            if (obj instanceof Centimeters)
+                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
 
             return false;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(toFeet());
+            return Double.hashCode(toInches());
         }
     }
 
-    // Same unit comparison
-    public static boolean compareFeet(double a, double b) {
-        return new Feet(a).equals(new Feet(b));
+    // ---------- YARDS ----------
+    public static class Yards {
+        private final double value;
+
+        public Yards(double value) {
+            this.value = value;
+        }
+
+        public double toInches() {
+            return value * 36.0;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+
+            if (obj instanceof Feet)
+                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
+
+            if (obj instanceof Inches)
+                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
+
+            if (obj instanceof Yards)
+                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
+
+            if (obj instanceof Centimeters)
+                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Double.hashCode(toInches());
+        }
     }
 
-    public static boolean compareInches(double a, double b) {
-        return new Inches(a).equals(new Inches(b));
+    // ---------- CENTIMETERS ----------
+    public static class Centimeters {
+        private final double value;
+
+        public Centimeters(double value) {
+            this.value = value;
+        }
+
+        public double toInches() {
+            return value * 0.393701;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+
+            if (obj instanceof Feet)
+                return Double.compare(this.toInches(), ((Feet) obj).toInches()) == 0;
+
+            if (obj instanceof Inches)
+                return Double.compare(this.toInches(), ((Inches) obj).toInches()) == 0;
+
+            if (obj instanceof Yards)
+                return Double.compare(this.toInches(), ((Yards) obj).toInches()) == 0;
+
+            if (obj instanceof Centimeters)
+                return Double.compare(this.toInches(), ((Centimeters) obj).toInches()) == 0;
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Double.hashCode(toInches());
+        }
     }
 
-    // Cross unit comparison
-    public static boolean compareFeetAndInches(double feet, double inches) {
-        return new Feet(feet).equals(new Inches(inches));
-    }
-
+    // ---------- MAIN ----------
     public static void main(String[] args) {
 
-        System.out.println("Feet Equal: " +
-                compareFeet(1.0, 1.0));
+        Yards yard = new Yards(1);
+        Feet feet = new Feet(3);
+        Centimeters cm = new Centimeters(1);
+        Inches inch = new Inches(0.393701);
 
-        System.out.println("Inches Equal: " +
-                compareInches(12.0, 12.0));
-
-        System.out.println("Feet vs Inches Equal: " +
-                compareFeetAndInches(1.0, 12.0)); // true
+        System.out.println("Yard == Feet: " + yard.equals(feet)); // true
+        System.out.println("CM == Inch: " + cm.equals(inch));     // true
     }
 }
