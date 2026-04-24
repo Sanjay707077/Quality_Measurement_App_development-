@@ -4,192 +4,126 @@ public class QCMGMT_App {
 
     private static final double EPSILON = 1e-6;
 
-    // ---------- FEET ----------
-    public static class Feet {
-        private final double value;
+    public enum LengthUnit {
+        INCH(1.0),
+        FEET(12.0),
+        YARDS(36.0),
+        CENTIMETERS(0.393701);
 
-        public Feet(double value) {
-            validate(value);
-            this.value = value;
+        private final double factor;
+
+        LengthUnit(double factor) {
+            this.factor = factor;
         }
 
-        public double toInches() {
-            return value * 12.0;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-
-            double otherValue;
-
-            if (obj instanceof Feet)
-                otherValue = ((Feet) obj).toInches();
-            else if (obj instanceof Inches)
-                otherValue = ((Inches) obj).toInches();
-            else if (obj instanceof Yards)
-                otherValue = ((Yards) obj).toInches();
-            else if (obj instanceof Centimeters)
-                otherValue = ((Centimeters) obj).toInches();
-            else
-                return false;
-
-            return Math.abs(this.toInches() - otherValue) < EPSILON;
-        }
-
-        @Override
-        public int hashCode() {
-            return Double.hashCode(toInches());
+        public double getFactor() {
+            return factor;
         }
     }
 
-    // ---------- INCHES ----------
-    public static class Inches {
-        private final double value;
+    public static class QuantityLength {
 
-        public Inches(double value) {
-            validate(value);
+        private final double value;
+        private final LengthUnit unit;
+
+        public QuantityLength(double value, LengthUnit unit) {
+            validate(value, unit);
             this.value = value;
+            this.unit = unit;
         }
 
-        public double toInches() {
+        private static void validate(double value, LengthUnit unit) {
+            if (unit == null)
+                throw new IllegalArgumentException("Unit cannot be null");
+
+            if (!Double.isFinite(value))
+                throw new IllegalArgumentException("Invalid number");
+        }
+
+        private double toBaseUnit() {
+            return value * unit.getFactor(); // convert to inches
+        }
+
+        public double getValue() {
             return value;
         }
 
+        public LengthUnit getUnit() {
+            return unit;
+        }
+
+        // ---------- CONVERSION ----------
+        public static double convert(double value, LengthUnit from, LengthUnit to) {
+            validate(value, from);
+
+            if (to == null)
+                throw new IllegalArgumentException("Target unit cannot be null");
+
+            return value * from.getFactor() / to.getFactor();
+        }
+
+        public QuantityLength convertTo(LengthUnit target) {
+            return new QuantityLength(
+                    convert(value, unit, target),
+                    target
+            );
+        }
+
+        // ---------- ADDITION ----------
+        public QuantityLength add(QuantityLength other) {
+            if (other == null)
+                throw new IllegalArgumentException("Null operand");
+
+            double totalBase = this.toBaseUnit() + other.toBaseUnit();
+
+            double result = totalBase / this.unit.getFactor();
+
+            return new QuantityLength(result, this.unit);
+        }
+
+        public static QuantityLength add(QuantityLength a, QuantityLength b) {
+            return a.add(b);
+        }
+
+        public static QuantityLength add(double v1, LengthUnit u1,
+                                         double v2, LengthUnit u2) {
+            return new QuantityLength(v1, u1)
+                    .add(new QuantityLength(v2, u2));
+        }
+
+        // ---------- EQUALITY ----------
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
-            if (obj == null) return false;
+            if (obj == null || getClass() != obj.getClass()) return false;
 
-            double otherValue;
+            QuantityLength other = (QuantityLength) obj;
 
-            if (obj instanceof Feet)
-                otherValue = ((Feet) obj).toInches();
-            else if (obj instanceof Inches)
-                otherValue = ((Inches) obj).toInches();
-            else if (obj instanceof Yards)
-                otherValue = ((Yards) obj).toInches();
-            else if (obj instanceof Centimeters)
-                otherValue = ((Centimeters) obj).toInches();
-            else
-                return false;
-
-            return Math.abs(this.toInches() - otherValue) < EPSILON;
+            return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < EPSILON;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(toInches());
-        }
-    }
-
-    // ---------- YARDS ----------
-    public static class Yards {
-        private final double value;
-
-        public Yards(double value) {
-            validate(value);
-            this.value = value;
-        }
-
-        public double toInches() {
-            return value * 36.0;
+            return Double.hashCode(toBaseUnit());
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-
-            double otherValue;
-
-            if (obj instanceof Feet)
-                otherValue = ((Feet) obj).toInches();
-            else if (obj instanceof Inches)
-                otherValue = ((Inches) obj).toInches();
-            else if (obj instanceof Yards)
-                otherValue = ((Yards) obj).toInches();
-            else if (obj instanceof Centimeters)
-                otherValue = ((Centimeters) obj).toInches();
-            else
-                return false;
-
-            return Math.abs(this.toInches() - otherValue) < EPSILON;
+        public String toString() {
+            return "Quantity(" + value + ", " + unit + ")";
         }
-
-        @Override
-        public int hashCode() {
-            return Double.hashCode(toInches());
-        }
-    }
-
-    // ---------- CENTIMETERS ----------
-    public static class Centimeters {
-        private final double value;
-
-        public Centimeters(double value) {
-            validate(value);
-            this.value = value;
-        }
-
-        public double toInches() {
-            return value * 0.393701;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-
-            double otherValue;
-
-            if (obj instanceof Feet)
-                otherValue = ((Feet) obj).toInches();
-            else if (obj instanceof Inches)
-                otherValue = ((Inches) obj).toInches();
-            else if (obj instanceof Yards)
-                otherValue = ((Yards) obj).toInches();
-            else if (obj instanceof Centimeters)
-                otherValue = ((Centimeters) obj).toInches();
-            else
-                return false;
-
-            return Math.abs(this.toInches() - otherValue) < EPSILON;
-        }
-
-        @Override
-        public int hashCode() {
-            return Double.hashCode(toInches());
-        }
-    }
-
-    // ---------- VALIDATION ----------
-    private static void validate(double value) {
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Invalid numeric value");
-        }
-    }
-
-    // ---------- CONVERSION UTILITY ----------
-    public static double convertToInches(Object obj) {
-        if (obj instanceof Feet) return ((Feet) obj).toInches();
-        if (obj instanceof Inches) return ((Inches) obj).toInches();
-        if (obj instanceof Yards) return ((Yards) obj).toInches();
-        if (obj instanceof Centimeters) return ((Centimeters) obj).toInches();
-        throw new IllegalArgumentException("Unsupported type");
     }
 
     // ---------- MAIN ----------
     public static void main(String[] args) {
 
-        Feet f = new Feet(1);
-        Inches i = new Inches(12);
-        Yards y = new Yards(1);
-        Centimeters cm = new Centimeters(1);
+        var a = new QuantityLength(1, LengthUnit.FEET);
+        var b = new QuantityLength(12, LengthUnit.INCH);
 
-        System.out.println("Feet == Inches: " + f.equals(i));   // true
-        System.out.println("Yard == Feet: " + y.equals(new Feet(3))); // true
-        System.out.println("CM == Inch: " + cm.equals(new Inches(0.393701))); // true
+        System.out.println(a.add(b)); // 2 FEET
+
+        var y = new QuantityLength(1, LengthUnit.YARDS);
+        var f = new QuantityLength(3, LengthUnit.FEET);
+
+        System.out.println(y.add(f)); // 2 YARDS
     }
 }
